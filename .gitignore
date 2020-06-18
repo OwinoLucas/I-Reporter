@@ -103,9 +103,8 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
-env/
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
@@ -130,4 +129,4 @@ dmypy.json
 
 #virtual environment
 venv/
-# environment variables
+
