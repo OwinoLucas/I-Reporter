@@ -32,34 +32,38 @@ class intervention_list(APIView):
             return JsonResponse(intervention_serializer.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET','PUT','DELETE'])
-def intervention_detail(request,pk):
+class intervention_detail(APIView):
+    def get(self,request,pk):
     #FIND TUTORIAL BY pk(id)
 
-    try:
-        intervention=InterventionRecord.objects.get(id=pk)
-        # GET A CERTAIN INTERVENTION
-        if  request.method=='GET':
+        try:
+            intervention=InterventionRecord.objects.get(id=pk)
+        
             intervention_serializer=InterventionSerializer(intervention)
             return JsonResponse(intervention_serializer.data)
-
-        # UPDATE A CERTAIN INTERVENTION TUTORIAL
-        elif request.method=='PUT':
+        except InterventionRecord.DoesNotExist:
+            return JsonResponse({'message': 'The Intervention Record does not exist!'}, status=status.HTTP_404_NOT_FOUND) 
+        
+    def put(self,request,pk):
+        try:
+            intervention=InterventionRecord.objects.get(id=pk)
             intervention_data=JSONParser().parse(request)
             intervention_serializer=InterventionSerializer(intervention,data=intervention_data)
             if intervention_serializer.is_valid():
                 intervention_serializer.save()
                 return JsonResponse(intervention_serializer.data)
             return JsonResponse(intervention_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        
+        except InterventionRecord.DoesNotExist:
+            return JsonResponse({'message': 'The Intervention Record does not exist!'}, status=status.HTTP_404_NOT_FOUND) 
+    def delete(self,request,pk):
         # DELETE A CERTAIN INTERVENTION RECORD
-        elif request.method=='DELETE':
+        
+        try:
+            intervention=InterventionRecord.objects.get(id=pk)
             intervention.delete()
             return JsonResponse({'message': 'Intervention Record was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-    except InterventionRecord.DoesNotExist:
-        return JsonResponse({'message': 'The Intervention Record does not exist'}, status=status.HTTP_404_NOT_FOUND) 
-
-    #### GET /PUT /DELETE tutorial
+        except InterventionRecord.DoesNotExist:
+            return JsonResponse({'message': 'The Intervention Record does not exist!'}, status=status.HTTP_404_NOT_FOUND) 
 
 
 @api_view(['GET',])
