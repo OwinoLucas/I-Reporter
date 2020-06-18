@@ -1,4 +1,4 @@
-#!/home/lucas/Documents/I-Reporter/venv/bin/python
+#!/home/victor/I-Reporter/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
