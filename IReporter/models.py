@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
-from django.db import models, transaction
+from django.db import models
 from django.utils import timezone
+from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
 
 # Create your models here.
- 
 class UserManager(BaseUserManager):
  
     def _create_user(self, email, password, **extra_fields):
@@ -14,7 +14,7 @@ class UserManager(BaseUserManager):
         Creates and saves a User with the given email,and password.
         """
         if not email:
-            raise ValueError('Users Must Have an email address')
+            raise ValueError('The given email must be set')
         try:
             with transaction.atomic():
                 user = self.model(email=email, **extra_fields)
@@ -52,6 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
  
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
+
  
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
