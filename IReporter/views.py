@@ -7,7 +7,7 @@ from rest_framework_jwt.settings import api_settings
 from .serializers import UserSerializer
 from .models import User
 import jwt
-
+from .email import send_welcome_email
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -35,6 +35,7 @@ class LoginApiView(APIView):
             password = request.data['password']
 
             user = User.objects.get(email=email, password=password)
+            # send_welcome_email(first_name,email)
             # import pdb; pdb.set_trace()
             if user:
                 try:

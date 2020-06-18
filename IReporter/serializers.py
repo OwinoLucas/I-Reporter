@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from.models import User
- 
+from django.contrib.auth.hashers import make_password
  
 class UserSerializer(serializers.ModelSerializer):
  
@@ -10,11 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'first_name', 'last_name',
                   'date_joined', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
+    validate_password = make_password
+        # extra_kwargs = {'password': {'write_only': True}}
 
-# class LoginSerializer(serializers.ModelSerializer):
+# class SubscribersSerializer(serializers.ModelSerializer):
     
-#     class Meta(object):
-#         model = User
-#         fields = ( 'email','password')
-#         extra_kwargs = {'password': {'write_only': True}}
+#     class Meta:
+#         model = Subscribers
+#         fields = ( 'name', 'email')
+       
