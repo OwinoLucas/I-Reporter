@@ -66,14 +66,16 @@ class intervention_detail(APIView):
             return JsonResponse({'message': 'The Intervention Record does not exist!'}, status=status.HTTP_404_NOT_FOUND) 
 
 
-@api_view(['GET',])
-def intervention_list_resolved(request):
-    #Get all  resolved INtervention
-    intervention=InterventionRecord.objects.filter(status='resolved')
 
-    if request.method=='GET':
-        intervention_serializer=InterventionSerializer(intervention,many=True)
-        return  JsonResponse(intervention_serializer.data,safe=False)
+class intervention_list_status(APIView):
+    def get(self,request):
+        #Get all  resolved INtervention
+        try:
+            intervention=InterventionRecord.objects.filter(status='resolved')
+            intervention_serializer=InterventionSerializer(intervention,many=True)
+            return  JsonResponse(intervention_serializer.data,safe=False)
+        except InterventionRecord.DoesNotExist:
+            return JsonResponse({'message': 'The Status does not exist!'}, status=status.HTTP_404_NOT_FOUND) 
 
 
 
