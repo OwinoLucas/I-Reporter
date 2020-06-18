@@ -57,7 +57,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
         return self
-        
+
 class Profile(models.Model):
     '''
     profile class to define profile objects
@@ -65,3 +65,4 @@ class Profile(models.Model):
     profile_picture=CloudinaryField('picture',blank=True)
     bio=models.CharField(max_length=100,blank=True)
     contacts=models.CharField(max_length=30,blank=True)
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
