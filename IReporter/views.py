@@ -24,7 +24,7 @@ class intervention_list(APIView):
         return JsonResponse(intervention_serializers.data, safe=False)
 
     # #CREATE AND SAVE A NEW INTERVENTION RECORD
-    def put(self,request):        
+    def post(self,request):        
         intervention_data = JSONParser().parse(request)
         intervention_serializer = InterventionSerializer(data=intervention_data)
         if intervention_serializer.is_valid():
