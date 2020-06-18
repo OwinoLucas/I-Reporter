@@ -7,15 +7,13 @@ from rest_framework import status
  
 from .models import InterventionRecord
 from .serializers import InterventionSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,APIView,permission_classes
 
 
 # Create your views here.
-
-@api_view(['GET','POST','DELETE'])
-def intervention_list(request):
+class intervention_list(APIView):
+    def get(self,request):
     #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
-    if request.method == 'GET':
         intervention =InterventionRecord.objects.all()
         
         title = request.GET.get('title', None)
@@ -25,8 +23,8 @@ def intervention_list(request):
         intervention_serializers = InterventionSerializer(intervention, many=True)
         return JsonResponse(intervention_serializers.data, safe=False)
 
-    #CREATE AND SAVE A NEW INTERVENTION RECORD 
-    elif request.method == 'POST':
+    # #CREATE AND SAVE A NEW INTERVENTION RECORD
+    def put(self,request):        
         intervention_data = JSONParser().parse(request)
         intervention_serializer = InterventionSerializer(data=intervention_data)
         if intervention_serializer.is_valid():
@@ -72,3 +70,7 @@ def intervention_list_resolved(request):
     if request.method=='GET':
         intervention_serializer=InterventionSerializer(intervention,many=True)
         return  JsonResponse(intervention_serializer.data,safe=False)
+
+
+
+

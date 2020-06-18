@@ -8,7 +8,7 @@ class InterventionRecord(models.Model):
         ('rejected','rejected'),
         ('resolved','resolved')
     ]
-    title=models.CharField(max_length=50,blank=False)
+    title=models.CharField(max_length=50,blank=False,default='')
     description=models.TextField()
     time_of_creation=models.DateTimeField(auto_now_add=True)
     time_last_edit=models.DateTimeField(auto_now=True)
