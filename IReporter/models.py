@@ -66,6 +66,7 @@ class Profile(models.Model):
     profile_picture=CloudinaryField('picture',blank=True)
     bio=models.CharField(max_length=100,blank=True)
     contacts=models.CharField(max_length=30,blank=True)
+   
     
 class InterventionRecord(models.Model):
     STATUS=[
