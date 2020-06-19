@@ -10,8 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'first_name', 'last_name',
                   'date_joined', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
     validate_password = make_password
-        # extra_kwargs = {'password': {'write_only': True}}
 
 class InterventionSerializer(serializers.ModelSerializer):
     

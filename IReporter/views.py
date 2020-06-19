@@ -16,8 +16,7 @@ from rest_framework.decorators import api_view,APIView,permission_classes
 
 class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
-    permission_classes = (AllowAny,)
- 
+    permission_classes = (AllowAny,) 
     def post(self, request):
         user = request.data
         serializer = UserSerializer(data=user)
@@ -33,7 +32,7 @@ class LoginApiView(APIView):
             password = request.data['password']
 
             user = User.objects.get(email=email, password=password)
-            # send_welcome_email(first_name,email)
+            
             # import pdb; pdb.set_trace()
             if user:
                 try:
