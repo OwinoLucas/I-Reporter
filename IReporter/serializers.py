@@ -1,14 +1,11 @@
 from rest_framework import serializers
-from .models import InterventionRecord
-
-
-class InterventionSerializer(serializers.ModelSerializer):
+from IReporter.models import Profile,User,InterventionRecord
+from django.contrib.auth.hashers import make_password
+class ProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model=InterventionRecord
-        fields=('id','title','description','time_of_creation','time_last_edit','location','status')
-from.models import User
- 
+        model=Profile
+        fields=('id',"profile_picture",'bio','contacts')
  
 class UserSerializer(serializers.ModelSerializer):
  
@@ -19,10 +16,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'first_name', 'last_name',
                   'date_joined', 'password')
         extra_kwargs = {'password': {'write_only': True}}
+    validate_password = make_password
+        
 
-# class LoginSerializer(serializers.ModelSerializer):
+class InterventionSerializer(serializers.ModelSerializer):
     
-#     class Meta(object):
-#         model = User
-#         fields = ( 'email','password')
-#         extra_kwargs = {'password': {'write_only': True}}
+    class Meta:
+        model=InterventionRecord
+        fields=('id','title','description','time_of_creation','time_last_edit','location','status')
+
+ 

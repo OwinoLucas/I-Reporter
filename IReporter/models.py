@@ -1,25 +1,12 @@
 from __future__ import unicode_literals
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
-
 # Create your models here.
-
-class InterventionRecord(models.Model):
-    STATUS=[
-        ('Under Investigation','Under Investigation'),
-        ('rejected','rejected'),
-        ('resolved','resolved')
-    ]
-    title=models.CharField(max_length=50,blank=False,default='')
-    description=models.TextField()
-    time_of_creation=models.DateTimeField(auto_now_add=True)
-    time_last_edit=models.DateTimeField(auto_now=True)
-    location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
-    status=models.CharField(max_length=250,choices=STATUS,default='')
     
 class UserManager(BaseUserManager):
  
@@ -71,3 +58,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
         return self
+
+class Profile(models.Model):
+    '''
+    profile class to define profile objects
+    '''
+    profile_picture=CloudinaryField('picture',blank=True)
+    bio=models.CharField(max_length=100,blank=True)
+    contacts=models.CharField(max_length=30,blank=True)
+    
+class InterventionRecord(models.Model):
+    STATUS=[
+        ('Under Investigation','Under Investigation'),
+        ('rejected','rejected'),
+        ('resolved','resolved')
+    ]
+    title=models.CharField(max_length=50,blank=False,default='')
+    description=models.TextField()
+    time_of_creation=models.DateTimeField(auto_now_add=True)
+    time_last_edit=models.DateTimeField(auto_now=True)
+    location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
+    status=models.CharField(max_length=250,choices=STATUS,default='')

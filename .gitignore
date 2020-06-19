@@ -106,7 +106,9 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-
+.env
+venv/
+.venv
 
 # Spyder project settings
 .spyderproject
