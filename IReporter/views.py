@@ -13,12 +13,21 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from .serializers import UserSerializer
-
+# from django.core.mail import EmailMessage
 # Create your views here.
 
 class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,)
+    # def send_email():
+    # email = EmailMessage(
+    #     'Title',
+    #     (UserSerializer.first_name, UserSerializer.email, ),
+    #     'my-email',
+    #     ['my-receive-email']
+    # )
+    # email.attach_file(ConsultSerializer.file)
+    # email.send()
  
     def post(self, request):
         user = request.data
