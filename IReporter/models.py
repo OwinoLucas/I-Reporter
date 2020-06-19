@@ -14,3 +14,4 @@ class InterventionRecord(models.Model):
     time_last_edit=models.DateTimeField(auto_now=True)
     location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
     status=models.CharField(max_length=250,choices=STATUS,default='')
+    
