@@ -1,3 +1,0 @@
-Hello {{first_name}}
-
-We noticed that you signed up for an account using our I Reporter application. We would like to welcome you to the community. We are looking forward to collaborating with you to make our country a better place.
