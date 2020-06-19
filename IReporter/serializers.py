@@ -14,9 +14,3 @@ class UserSerializer(serializers.ModelSerializer):
     validate_password = make_password
         
 
-# class SubscribersSerializer(serializers.ModelSerializer):
-    
-#     class Meta:
-#         model = Subscribers
-#         fields = ( 'name', 'email')
-       

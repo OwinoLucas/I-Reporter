@@ -58,6 +58,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
         return self
 
-# class Subscribers(models.Model):
-#     name = models.CharField(max_length = 30, blank=True)
-#     email = models.EmailField(max_length=40, unique=True)

@@ -7,28 +7,18 @@ from rest_framework_jwt.settings import api_settings
 from .serializers import UserSerializer
 from .models import User
 import jwt
-from .email import send_welcome_email
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from .serializers import UserSerializer
-# from django.core.mail import EmailMessage
+
 # Create your views here.
 
 class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
-    permission_classes = (AllowAny,)
-    # def send_email():
-    # email = EmailMessage(
-    #     'Title',
-    #     (UserSerializer.first_name, UserSerializer.email, ),
-    #     'my-email',
-    #     ['my-receive-email']
-    # )
-    # email.attach_file(ConsultSerializer.file)
-    # email.send()
- 
+    permission_classes = (AllowAny,) 
     def post(self, request):
         user = request.data
         serializer = UserSerializer(data=user)
@@ -44,7 +34,7 @@ class LoginApiView(APIView):
             password = request.data['password']
 
             user = User.objects.get(email=email, password=password)
-            # send_welcome_email(first_name,email)
+            
             # import pdb; pdb.set_trace()
             if user:
                 try:
