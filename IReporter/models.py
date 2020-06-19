@@ -10,3 +10,6 @@ class Flag(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     tags=models.ManyToManyField()
+    
+    class Meta:
+        verbose_name_plural = "Flags"
