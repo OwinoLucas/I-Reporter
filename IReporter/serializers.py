@@ -1,6 +1,11 @@
-from rest_framework import serializers 
-from.models import User,InterventionRecord
+from rest_framework import serializers
+from IReporter.models import Profile,User,InterventionRecord
 from django.contrib.auth.hashers import make_password
+class ProfileSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Profile
+        fields=('id',"profile_picture",'bio','contacts')
  
 class UserSerializer(serializers.ModelSerializer):
  

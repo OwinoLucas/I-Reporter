@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
-
 # Create your models here.
     
 class UserManager(BaseUserManager):
@@ -59,6 +59,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
         return self
 
+class Profile(models.Model):
+    '''
+    profile class to define profile objects
+    '''
+    profile_picture=CloudinaryField('picture',blank=True)
+    bio=models.CharField(max_length=100,blank=True)
+    contacts=models.CharField(max_length=30,blank=True)
+    
 class InterventionRecord(models.Model):
     STATUS=[
         ('Under Investigation','Under Investigation'),
