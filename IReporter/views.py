@@ -33,6 +33,7 @@ class LoginApiView(APIView):
             password = request.data['password']
 
             user = User.objects.get(email=email, password=password)
+            # send_welcome_email(first_name,email)
             # import pdb; pdb.set_trace()
             if user:
                 try:
