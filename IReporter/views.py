@@ -59,7 +59,8 @@ class ProfileList(APIView):
     '''
     class to define view for the profile api endpoint
     '''
-    
+    permission_classes = (IsAuthenticated,)
+ 
     def get(self, request, format=None):
         all_profiles=Profile.objects.all()
         serializers=ProfileSerializer(all_profiles,many=True)
@@ -76,6 +77,8 @@ class SingleProfile(APIView):
     '''
     class to define view for returning one profile
     '''
+    permission_classes = (IsAuthenticated,)
+ 
     def get(self,request,pk):
         try:
             profile=Profile.objects.get(pk=pk)
