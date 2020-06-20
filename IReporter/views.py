@@ -11,13 +11,6 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework.decorators import api_view,APIView,permission_classes
 
-
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from rest_framework import status
-from .serializers import UserSerializer
-
 # Create your views here.
 
 class CreateUserAPIView(APIView):
@@ -39,17 +32,15 @@ class LoginApiView(APIView):
     def post(self, request):
         try:
             email = request.data['email']
-            password = request.data['password']
-
-            user = User.objects.get(email=email, password=password)
-            
-            # import pdb; pdb.set_trace()
+            password = request.data['password']          
+            user = User.objects.get(email=email, password=password)          
             if user:
                 try:
                     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
                     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
                     payload = jwt_payload_handler(user)
                     token = jwt_encode_handler(payload)
+                    #import pdb; pdb.set_trace()
                     user_details = {}
                     user_details['name'] = "%s %s" % (
                         user.first_name, user.last_name)
