@@ -215,7 +215,7 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'IReporter.User'
 MEDIA_URL='/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.VideoMediaCloudinaryStorage'
-
+IMAGE_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
 # Email configurations remember to install python-decouple
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_HOST = config('EMAIL_HOST')
