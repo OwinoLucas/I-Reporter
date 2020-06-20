@@ -24,7 +24,7 @@ class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,) 
     def post(self, request):
-        # Validating our serializer from the UserRegistrationSerializer
+        # Validating our serializer from the UserRegSerializer
         serializer = UserRegSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
