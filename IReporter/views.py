@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_jwt.settings import api_settings
-from .serializers import UserSerializer,InterventionSerializer
+from .serializers import UserSerializer,InterventionSerializer,UserRegSerializer
 from .models import User,InterventionRecord
 import jwt
 from django.http.response import JsonResponse
@@ -24,11 +24,15 @@ class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,) 
     def post(self, request):
-        user = request.data
-        serializer = UserSerializer(data=user)
+        # Validating our serializer from the UserRegistrationSerializer
+        serializer = UserRegSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Everything's valid, so send it to the UserSerializer
+        model_serializer = UserSerializer(data=serializer.data)
+        model_serializer.is_valid(raise_exception=True)
+        model_serializer.save()
+        return Response(model_serializer.data, status=status.HTTP_201_CREATED)
         
 class LoginApiView(APIView):
     permission_classes = (AllowAny,)
