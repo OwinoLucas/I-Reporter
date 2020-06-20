@@ -24,7 +24,11 @@ cloudinary.config(
     cloud_name=config('cloud_name'),
     api_key=config('api_key'),
     api_secret=config('api_secret'))
-
+CLOUDINARY_STORAGE={
+    'CLOUD_NAME':config('STORAGE_CLOUD_NAME'),
+    'API_KEY':config('STORAGE_API_KEY'),
+    'API_SECRET':config('STORAGE_API_SECRET_KEY')
+}
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -74,6 +78,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'rest_framework',
     'corsheaders',
     'rest_framework_jwt'
@@ -207,6 +213,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'IReporter.User'
+MEDIA_URL='/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.VideoMediaCloudinaryStorage'
 
 # Email configurations remember to install python-decouple
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')

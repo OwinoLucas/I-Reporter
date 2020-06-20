@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 from django.db import models
-from cloudinary.models import CloudinaryField
+from cloudinary.models import CloudinaryField,CloudinaryResource
 from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
+from cloudinary_storage.storage import VideoMediaCloudinaryStorage
+from cloudinary_storage.validators import validate_video
 # Create your models here.
     
 class UserManager(BaseUserManager):
@@ -66,7 +68,7 @@ class Profile(models.Model):
     profile_picture=CloudinaryField('picture',blank=True)
     bio=models.CharField(max_length=100,blank=True)
     contacts=models.CharField(max_length=30,blank=True)
-    
+
 class InterventionRecord(models.Model):
     STATUS=[
         ('Under Investigation','Under Investigation'),
@@ -78,4 +80,6 @@ class InterventionRecord(models.Model):
     time_of_creation=models.DateTimeField(auto_now_add=True)
     time_last_edit=models.DateTimeField(auto_now=True)
     location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
-    status=models.CharField(max_length=250,choices=STATUS,default='')
+    status=models.CharField(max_length=250,choices=STATUS,default='',blank=True)
+    image=CloudinaryField('interventionimages',blank=True)
+    videos=models.ImageField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
