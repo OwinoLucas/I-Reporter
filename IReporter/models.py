@@ -83,3 +83,4 @@ class InterventionRecord(models.Model):
     status=models.CharField(max_length=250,choices=STATUS,default='',blank=True)
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
+    user=models.ForeignKey(User,on_delete=models.CASCADE)

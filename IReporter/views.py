@@ -138,7 +138,7 @@ class intervention_detail(APIView):
         try:
             intervention=InterventionRecord.objects.get(id=pk)
             intervention_data=JSONParser().parse(request)
-            intervention_serializer=InterventionSerializer(intervention,data=intervention_data)
+            intervention_serializer=InterventionSerializer(intervention,data=request.data)
             if intervention_serializer.is_valid():
                 intervention_serializer.save()
                 return JsonResponse(intervention_serializer.data)
