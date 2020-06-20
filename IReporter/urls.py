@@ -2,11 +2,12 @@ from django.conf.urls import url
 from . import views
 from .views import CreateUserAPIView,LoginApiView,intervention_list,intervention_detail,intervention_list_status,ProfileList,SingleProfile
 from django.urls import path,re_path 
-from .views import InterventionList, CreateIntervention, InterventionDetail, InterventionListStatus
+from .views import InterventionList, CreateIntervention, InterventionDetail, InterventionListStatus,AllInterventionRecords
 
 app_name='IReporter'
 
 urlpatterns=[
+    url(r'^all-intervention-records/$',AllInterventionRecords.as_view(), name='AllInterventionRecords'),
     url(r'^intervention-records/(?P<title>[A-Za-z]+)/$',InterventionList.as_view(), name='fetch-intervention-records'),
     url(r'^create-intervention-record/$', CreateIntervention.as_view(), name='create-intervention-item'),
     url(r'^intervention-record-detail/(?P<pk>[0-9]+)/$',InterventionDetail.as_view(), name='intervention-detail'),

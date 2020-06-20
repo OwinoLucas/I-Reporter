@@ -122,7 +122,7 @@ class SingleProfile(APIView):
             return JsonResponse({'Message':"object does not exist"}, status=status.HTTP_404_NOT_FOUND) 
     
     # *****GETTING ALL INTERVENTION RECORDS****
-class all_intervention_records(APIView):
+class AllInterventionRecords(APIView):
     def get(self,request):
     #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
         intervention =InterventionRecord.objects.all()
