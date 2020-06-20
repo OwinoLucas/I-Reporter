@@ -82,4 +82,4 @@ class InterventionRecord(models.Model):
     location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
     status=models.CharField(max_length=250,choices=STATUS,default='',blank=True)
     image=CloudinaryField('interventionimages',blank=True)
-    videos=models.ImageField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
+    videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
