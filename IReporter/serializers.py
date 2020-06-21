@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'first_name', 'last_name',
                   'date_joined', 'password')
         extra_kwargs = {'password': {'write_only': True}}
-    validate_password = make_password
+    
         
 
 class InterventionSerializer(serializers.ModelSerializer):
@@ -21,8 +21,8 @@ class InterventionSerializer(serializers.ModelSerializer):
         fields=('id','title','description','time_of_creation','time_last_edit','location','status')
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user=UserSerializer(read_only=True)
-
+    
+    
     class Meta:
         model=Profile
         fields=('id',"profile_picture",'bio','contacts','user')

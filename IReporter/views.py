@@ -70,10 +70,14 @@ class ProfileList(APIView):
     def get(self, request, format=None):
         all_profiles=Profile.objects.all()
         serializers=ProfileSerializer(all_profiles,many=True)
-        return Response(serializers.data)
+        return Response(serialiPOSTzers.data)
 
     def post(self, request, format=None):
-        serializers = ProfileSerializer(data=request.data)
+        def add_user_data(data,user):
+            data['user']=user.id
+            return data
+        serializers = ProfileSerializer(data=add_user_data(request.data,request.user))
+        
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data, status=status.HTTP_201_CREATED)
@@ -97,7 +101,10 @@ class SingleProfile(APIView):
         parser_classes=[JSONParser,FileUploadParser,MultiPartParser]
         try:
             profile=Profile.objects.get(pk=pk)
-            profile_serializer=ProfileSerializer(profile,data=request.data)
+            def add_user_data(data,user):
+                data['user']=user.id
+                return data
+            profile_serializer=ProfileSerializer(profile,data=add_user_data(request.data,request.user))
             if profile_serializer.is_valid():
                 profile_serializer.save()
                 return Response(profile_serializer.data)
