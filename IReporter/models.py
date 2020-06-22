@@ -11,6 +11,11 @@ class Tag(models.Model):
 
 
 class Flag(models.Model):
+     STATUS=[
+        ('Under Investigation','Under Investigation'),
+        ('rejected','rejected'),
+        ('resolved','resolved')
+    ]
     title = models.CharField(max_length=100)
     description=models.TextField()
     created = models.DateTimeField(auto_now_add=True)
@@ -18,7 +23,7 @@ class Flag(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     tags=models.ManyToManyField(Tag)
-    
+    user=models.ForeignKey(User)
     class Meta:
         verbose_name_plural = "Flags"
         
