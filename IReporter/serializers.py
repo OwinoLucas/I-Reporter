@@ -1,7 +1,7 @@
 from rest_framework import serializers 
 from.models import User,InterventionRecord
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate
+ 
  
 class UserSerializer(serializers.ModelSerializer):
  
@@ -11,8 +11,24 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'first_name', 'last_name',
                   'date_joined', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
-    #validate_password = make_password
+        #extra_kwargs = {'password': {'write_only': True}}
+    # validate_password = make_password
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        instance = self.Meta.model(**validated_data)
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'password':
+                instance.set_password(value)
+            else:
+                setattr(instance, attr, value)
+        instance.save()
+        return instance
 
 class UserRegSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -36,7 +52,7 @@ class UserRegSerializer(serializers.Serializer):
 
         if data.get('password') != data.get('confirm_password'):
             raise serializers.ValidationError("Those passwords don't match.")
-
+          
         return data
  
 

@@ -10,6 +10,7 @@ import jwt
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework.decorators import api_view,APIView,permission_classes
+from django.contrib.auth.hashers import make_password,check_password
 
 # Create your views here.
 
@@ -33,7 +34,7 @@ class LoginApiView(APIView):
         try:
             email = request.data['email']
             password = request.data['password']          
-            user = User.objects.get(email=email, password=password)          
+            user = User.objects.get(email=email, password=password)      
             if user:
                 try:
                     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
