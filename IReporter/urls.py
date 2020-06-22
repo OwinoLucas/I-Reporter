@@ -5,8 +5,8 @@ from django.urls import path,re_path
 
 app_name='IReporter'
 urlpatterns=[
-    url(r'^api/profiles$',ProfileList.as_view()),
-    url(r'^api/profile/(?P<pk>[0-9]+)$',SingleProfile.as_view()),
+    url(r'^api/profiles$',ProfileList.as_view(),name="profilelist"),
+    url(r'^api/profile/(?P<pk>[0-9]+)$',SingleProfile.as_view(),name="singleprofile"),
     url(r'^signup/$', CreateUserAPIView.as_view()),
     url(r'^login/$', LoginApiView.as_view()),
     url(r'^api/interventionrecords/$',intervention_list.as_view()),

@@ -18,7 +18,7 @@ class InterventionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=InterventionRecord
-        fields=('id','title','description','time_of_creation','time_last_edit','location','status')
+        fields=('id','title','description','time_of_creation','time_last_edit','location','status','profile')
 
 class ProfileSerializer(serializers.ModelSerializer):
     
