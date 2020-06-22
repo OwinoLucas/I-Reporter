@@ -1,10 +1,8 @@
-<<<<<<< HEAD
 from rest_framework.response import Response
 from rest_framework import status
 from .models import InterventionRecord
 from .serializers import InterventionSerializer
 from rest_framework.decorators import APIView
-=======
 from django.shortcuts import render
 from IReporter.models import Profile,User,InterventionRecord
 from IReporter.serializers import ProfileSerializer,UserSerializer,InterventionSerializer
@@ -18,7 +16,6 @@ from django.http.response import JsonResponse
 import jwt
 from rest_framework_jwt.settings import api_settings
 from rest_framework.decorators import api_view,APIView,permission_classes
->>>>>>> feature-interventions-crud
 
 # pytest.ini
 
@@ -29,23 +26,18 @@ from rest_framework import status
 from .serializers import UserSerializer
 
 # Create your views here.
-class InterventionList(APIView):
-    def get(self,request,title):
-        # GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
 
-        interventions = InterventionRecord.objects.filter(title__icontains=title)
-        if interventions.exists():
-            interventions_serializer = InterventionSerializer(interventions, many=True)
-            return Response(interventions_serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
 class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,) 
     def post(self, request):
+        current_user=request.user
         user = request.data
+        print(current_user)
         serializer = UserSerializer(data=user)
+        
         serializer.is_valid(raise_exception=True)
+        serializer.user=current_user
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
         
@@ -122,11 +114,35 @@ class SingleProfile(APIView):
             return JsonResponse({'Message':"object does not exist"}, status=status.HTTP_404_NOT_FOUND) 
     
     # *****GETTING ALL INTERVENTION RECORDS****
+
+class CreateInterventionRecord(APIView):
+    
+    def post(self,request): 
+        current_user=request.user   
+        data=request.data
+        data['user']=current_user.id
+        intervention_serializer = InterventionSerializer(data=data)
+        if intervention_serializer.is_valid():
+            intervention_serializer.save()
+            return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class InterventionList(APIView):
+    def get(self,request,title):
+        # GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
+
+        interventions = InterventionRecord.objects.filter(title__icontains=title)
+        if interventions.exists():
+            interventions_serializer = InterventionSerializer(interventions, many=True)
+            return Response(interventions_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
 class AllInterventionRecords(APIView):
+    
     def get(self,request):
     #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
         intervention =InterventionRecord.objects.all()
-        
+        current_user=self.request.user
+        print(current_user)
         title = request.GET.get('title', None)
         if title is not None:
             intervention = InterventionRecord.filter(title__icontains=title)
@@ -134,36 +150,34 @@ class AllInterventionRecords(APIView):
         intervention_serializers = InterventionSerializer(intervention, many=True)
         return JsonResponse(intervention_serializers.data, safe=False)
 
-class CreateIntervention(APIView):
-    def post(self,request):        
-        intervention_serializer = InterventionSerializer(data=request.data)
-        if intervention_serializer.is_valid():
-            intervention_serializer.save()
-            return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
-        return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class InterventionDetail(APIView):
     def get(self,request,pk):
     #FIND TUTORIAL BY pk(id)
 
         try:
-            intervention=InterventionRecord.objects.get(id=pk)
+            intervention=InterventionRecord.objects.get(pk=pk)
         
             intervention_serializer=InterventionSerializer(intervention)
             return Response(intervention_serializer.data, status= status.HTTP_200_OK)
         except InterventionRecord.DoesNotExist:
             return Response({'detail': 'The Intervention Record does not exist.'}, status=status.HTTP_404_NOT_FOUND) 
         
-    def put(self,request,pk):
-        try:
-            intervention=InterventionRecord.objects.get(id=pk)
-            intervention_serializer=InterventionSerializer(intervention,data=request.data)
-            if intervention_serializer.is_valid():
-                intervention_serializer.save()
-                return Response(intervention_serializer.data, status=status.HTTP_200_OK)
-            return Response(intervention_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        except InterventionRecord.DoesNotExist:
-            return Response({'detail': 'The Intervention Record does not exist.'}, status=status.HTTP_404_NOT_FOUND) 
+    def put (self,request,pk):
+        intervention=InterventionRecord.objects.get(id=pk)  
+        # tutorial_data = JSONParser().parse(request)
+        def add_user_data(data,user):
+            request.data_mutable=True
+            data['user']=user.id
+            return data
+        intervention_serializer=InterventionSerializer(intervention,data=add_user_data(request.data,request.user))
+        print(intervention_serializer)
+        if intervention_serializer.is_valid():
+            intervention_serializer.save()
+            return Response(intervention_serializer.data, status=status.HTTP_200_OK)
+        return Response(intervention_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+         
 
     def delete(self,request,pk):
         # DELETE A CERTAIN INTERVENTION RECORD
