@@ -1,6 +1,6 @@
 # I Reporter
 ## Description
-Corruption is a huge bane to Africa’s development. African countries must develop novel and localised solutions that will curb this menace, hence the introduction to ireport.It is an application that enables users to fight corruption through filing redflags/intervention reports. The users setup an account, naviagate to create their reports and check regularly to keep tabs on their reports
+Corruption is a huge bane to Africa’s development. African countries must develop novel and localised solutions that will curb this menace, hence the introduction to ireport.It is an application that enables users to fight corruption through filing redflags/flag reports. The users setup an account, naviagate to create their reports and check regularly to keep tabs on their reports
 
 
 

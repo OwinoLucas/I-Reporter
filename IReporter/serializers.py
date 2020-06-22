@@ -1,5 +1,5 @@
 from rest_framework import serializers,status
-from IReporter.models import Profile,User,InterventionRecord
+from IReporter.models import Profile,User,InterventionRecord,Flag,Tag
 from django.contrib.auth.hashers import make_password
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,5 +27,18 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=Profile
         fields=('id',"profile_picture",'bio','contacts','user')
+ 
+class FlagSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Flag
+        fields = '__all__'
+        
+class TagSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Tag
+        fields='__all__'         
 
     
+

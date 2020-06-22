@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.utils import timezone
+import datetime
 from cloudinary.models import CloudinaryField,CloudinaryResource
 from django.utils import timezone
 from django.db import transaction
@@ -89,3 +91,28 @@ class InterventionRecord(models.Model):
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+
+class Tag(models.Model):
+    tags = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.tags
+
+class Flag(models.Model):
+     STATUS=[
+        ('Under Investigation','Under Investigation'),
+        ('rejected','rejected'),
+        ('resolved','resolved')
+    ]
+    title = models.CharField(max_length=100)
+    description=models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
+    tags=models.ManyToManyField(Tag)
+    user=models.ForeignKey(User)
+    class Meta:
+        verbose_name_plural = "Flags"    
+    
+    
