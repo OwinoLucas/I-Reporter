@@ -86,7 +86,7 @@ class ProfileList(APIView):
     def get(self, request, format=None):
         all_profiles=Profile.objects.all()
         serializers=ProfileSerializer(all_profiles,many=True)
-        return Response(serialiPOSTzers.data)
+        return Response(serializers.data)
 
     def post(self, request, format=None):
         def add_user_data(data,user):
@@ -118,6 +118,7 @@ class SingleProfile(APIView):
         try:
             profile=Profile.objects.get(pk=pk)
             def add_user_data(data,user):
+                request.data_mutable=True
                 data['user']=user.id
                 return data
             profile_serializer=ProfileSerializer(profile,data=add_user_data(request.data,request.user))
@@ -165,6 +166,16 @@ class AllInterventionRecords(APIView):
         intervention_serializers = InterventionSerializer(intervention, many=True)
         return JsonResponse(intervention_serializers.data, safe=False)
 
+    # #CREATE AND SAVE A NEW INTERVENTION RECORD
+    def post(self,request,format=None):        
+        def add_user_data(data,user):
+                data['profile']=user.id
+                return data
+        intervention_serializer = InterventionSerializer(data=add_user_data(request.data,request.user))
+        if intervention_serializer.is_valid():
+            intervention_serializer.save()
+            return Response(intervention_serializer.data, status=status.HTTP_201_CREATED) 
+        return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InterventionDetail(APIView):
