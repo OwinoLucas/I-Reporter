@@ -1,44 +1,37 @@
 from rest_framework import serializers 
-from.models import User,InterventionRecord
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate
- 
+from .models import InterventionRecord
+from django.contrib.auth.models import User
+from rest_framework.validators import UniqueValidator
+
 class UserSerializer(serializers.ModelSerializer):
- 
-    date_joined = serializers.ReadOnlyField()
- 
-    class Meta(object):
+    email = serializers.EmailField(
+        required=True, 
+        validators=[UniqueValidator(queryset=User.object.all())]) 
+    username = serializers.CharField(
+        max_length = 32, 
+        validators=[UniqueValidator(queryset=User.object.all())])
+    first_name = serializers.CharField(
+        max_length = 32)
+    last_name = serializers.CharField(
+        max_length = 32)
+    password = serializers.CharField(
+        min_length = 5,
+        write_only = True)
+        
+    def create(self,validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            password=validated_data['password'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+          )
+        return user
+
+    class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name',
-                  'date_joined', 'password')
-        extra_kwargs = {'password': {'write_only': True}}
-    validate_password = make_password
-
-class UserRegSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    first_name = serializers.CharField(required=False)
-    last_name = serializers.CharField(required=False)
-    password = serializers.CharField()
-    confirm_password = serializers.CharField()
-
-    def validate_email(self, email):
-        existing = User.objects.filter(email=email).first()
-        if existing:
-            raise serializers.ValidationError("Someone with that email "
-                "address has already registered. Was it you?")
-
-        return email
-
-    def validate(self, data):
-        if not data.get('password') or not data.get('confirm_password'):
-            raise serializers.ValidationError("Please enter a password and "
-                "confirm it.")
-
-        if data.get('password') != data.get('confirm_password'):
-            raise serializers.ValidationError("Those passwords don't match.")
-
-        return data
- 
+        fields = ('username','email','first_name','last_name','password')
+    
 
 class InterventionSerializer(serializers.ModelSerializer):
     
@@ -46,15 +39,3 @@ class InterventionSerializer(serializers.ModelSerializer):
         model=InterventionRecord
         fields=('id','title','description','time_of_creation','time_last_edit','location','status')
 
- 
-   #     password = validate_data["password"]
-    #     confirm_password = validate_data["confirm_password"]
-    #     if password != confirm_password:
-    #         raise serializers.ValidationError(
-    #     {"password":"confirm password must match password."})
-    #     user = User(email=email, **extra_fields)
-    #     user.set_password(password)
-    #     # validate_password = make_password
-    #     user.save()
-    #     return user
-        
