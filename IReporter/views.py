@@ -20,7 +20,7 @@ from django.contrib.auth import authenticate
 
 class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
-    # permission_classes = (AllowAny,) 
+    permission_classes = (AllowAny,) 
     def post(self, request):
         # Validating our serializer from the UserSerializer
         user_serializer = UserSerializer(data=request.data)
