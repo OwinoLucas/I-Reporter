@@ -79,14 +79,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-
     'cloudinary_storage',
     'cloudinary',
     'rest_framework',
     'corsheaders',
     'rest_framework_jwt'
-
 ]
 
 REST_FRAMEWORK = {
@@ -147,10 +144,10 @@ MIDDLEWARE = [
    
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = False
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:8081',
-# )
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8081',
+)
 
 ROOT_URLCONF = 'group11.urls'
 
@@ -175,18 +172,6 @@ WSGI_APPLICATION = 'group11.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
 
 
 
