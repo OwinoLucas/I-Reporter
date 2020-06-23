@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from . import views
 from django.urls import path,re_path 
-from .views import flag_list,flag_detail
+from .views import FlagDetail,FlagStatus,AllFlagRecords,CreateFlag,FlagList
 from .views import CreateUserAPIView,LoginApiView,ProfileList,SingleProfile
 from django.urls import path,re_path 
 from .views import InterventionList, CreateInterventionRecord, InterventionDetail, InterventionListStatus,AllInterventionRecords,
