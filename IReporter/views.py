@@ -24,8 +24,9 @@ class CreateUserAPIView(APIView):
         if user_serializer.is_valid():
             user = user_serializer.save()
             subject = 'welcome'
-            body = '''Greetings from the I-reporter Team,
-                    Hello''' + user_serializer.data['username'] + ''', we are glad having you as one of our
+            body = '''
+                    Greetings from the I-reporter Team,
+                    Hello ''' + user_serializer.data['username'] + ''', we are glad having you as one of our
                     entrusted clients to give news and update the different agencies on the country's development.
                     
                     We ensure that your voices will be heard!
