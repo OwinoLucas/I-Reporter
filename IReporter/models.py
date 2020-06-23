@@ -111,6 +111,8 @@ class Flag(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     tags=models.ManyToManyField(Tag)
+    image=models.ImageField(upload_to='images/flagimages/',blank=True,storage=MediaCloudinaryStorage())
+    videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
     user=models.ForeignKey(User)
     class Meta:
         verbose_name_plural = "Flags"    
