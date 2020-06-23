@@ -99,7 +99,7 @@ class Tag(models.Model):
         return self.tags
 
 class Flag(models.Model):
-     STATUS=[
+    STATUS=[
         ('Under Investigation','Under Investigation'),
         ('rejected','rejected'),
         ('resolved','resolved')
@@ -113,7 +113,7 @@ class Flag(models.Model):
     tags=models.ManyToManyField(Tag)
     image=models.ImageField(upload_to='images/flagimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
-    user=models.ForeignKey(User)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
     class Meta:
         verbose_name_plural = "Flags"    
     

@@ -4,7 +4,7 @@ from django.urls import path,re_path
 from .views import FlagDetail,FlagStatus,AllFlagRecords,CreateFlag,FlagList
 from .views import CreateUserAPIView,LoginApiView,ProfileList,SingleProfile
 from django.urls import path,re_path 
-from .views import InterventionList, CreateInterventionRecord, InterventionDetail, InterventionListStatus,AllInterventionRecords,
+from .views import InterventionList, CreateInterventionRecord, InterventionDetail, InterventionListStatus,AllInterventionRecords
 
 app_name='IReporter'
 
