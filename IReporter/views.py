@@ -214,61 +214,6 @@ class InterventionDetail(APIView):
         except InterventionRecord.DoesNotExist:
             return Response({'detail': 'The Intervention Record does not exist.'}, status=status.HTTP_404_NOT_FOUND) 
           
-class flag_list(APIView):
-    def get(self,request):
-    #list of all red flags
-        flags =Flag.objects.all()
-        
-        title = request.GET.get('title', None)
-        if title is not None:
-            flags = Flag.filter(title__icontains=title)
-        
-        flag_serializers = FlagSerializer(flags, many=True)
-        return JsonResponse(flag_serializers.data, safe=False)
-
-    # function to create and save new flag instance
-    def post(self,request):        
-        flag_data = JSONParser().parse(request)
-        flag_serializer =FlagSerializer(data=flag_data)
-        if flag_serializer.is_valid():
-            flag_serializer.save()
-            return JsonResponse(flag_serializer.data, status=status.HTTP_201_CREATED) 
-        return JsonResponse(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class flag_detail(APIView):
-    def get(self,request,pk):
-    #funtion to find a flag by id(PK) 
-
-        try:
-            flags=Flag.objects.get(id=pk)
-        
-            flag_serializer=FlagSerializer(flags)
-            return JsonResponse(flag_serializer.data)
-        except Flag.DoesNotExist:
-            return JsonResponse({'message': 'Record does not exist!'}, status=status.HTTP_404_NOT_FOUND) 
-        
-    def put(self,request,pk):
-        try:
-            flags=Flag.objects.get(id=pk)
-            flag_data=JSONParser().parse(request)
-            flag_serializer=FlagSerializer(flags,data=flag_data)
-            if flag_serializer.is_valid():
-                flag_serializer.save()
-                return JsonResponse(flag_serializer.data)
-            return JsonResponse(flag_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        except Flag.DoesNotExist:
-            return JsonResponse({'message': 'Record soes not exist!'}, status=status.HTTP_404_NOT_FOUND) 
-    def delete(self,request,pk):
-        # function to delete a user flag object
-        
-        try:
-            flags=Flag.objects.get(id=pk)
-            flags.delete()
-            return JsonResponse({'message': 'Flag Record  deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-        except Flag.DoesNotExist:
-            return JsonResponse({'message': ' Flag Record does not exist!'}, status=status.HTTP_404_NOT_FOUND)          
-
-
 
 class InterventionListStatus(APIView):
     def get(self,request,intervention_status):
@@ -278,6 +223,98 @@ class InterventionListStatus(APIView):
             interventions_serializer = InterventionSerializer(interventions, many=True)
             return Response(interventions_serializer.data, status=status.HTTP_200_OK)
         return Response({'detail' : 'The status was not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+class CreateFlag(APIView):
+    
+    def post(self,request): 
+        current_user=request.user   
+        data=request.data
+        data['user']=current_user.id
+        flag_serializer = FlagSerializer(data=data)
+        if flag_serializer.is_valid():
+            flag_serializer.save()
+            return Response(flag_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class FlagList(APIView):
+    def get(self,request,title):
+        #function to fetch all flag records data
+
+        flags_obj = Flag.objects.filter(title__icontains=title)
+        if flags_obj.exists():
+            flag_serializer = FlagSerializer(flags_obj, many=True)
+            return Response(flag_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
+class AllFlagRecords(APIView):
+    
+    def get(self,request):
+    
+        flag_obj =Flag.objects.all()
+        current_user=self.request.user
+        print(current_user)
+        title = request.GET.get('title', None)
+        if title is not None:
+            flag_obj = Flag.filter(title__icontains=title)
+        
+        flag_serializers = FlagSerializer(flag_obj, many=True)
+        return JsonResponse(flag_serializers.data, safe=False)
+
+    #create and save flag record
+    def post(self,request,format=None):        
+        def add_user_data(data,user):
+                data['profile']=user.id
+                return data
+        flag_serializer = FlagSerializer(data=add_user_data(request.data,request.user))
+        if flag_serializer.is_valid():
+            flag_serializer.save()
+            return Response(flag_serializer.data, status=status.HTTP_201_CREATED) 
+        return Response(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FlagStatus(APIView):
+    def get(self,request,intervention_status):
+        # Get all record items using the flag status
+        flag_obj = Flag.objects.filter(status = flag_status)
+        if Flag.exists():
+            flag_serializer = FlagSerializer(flag_obj, many=True)
+            return Response(flag_serializer.data, status=status.HTTP_200_OK)
+        return Response({'detail' : 'The status was not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class FlagDetail(APIView):
+    def get(self,request,pk):
+    #retreive flag record by ID
+
+        try:
+            flag_obj=Flag.objects.get(pk=pk)
+        
+            flag_serializer=FlagSerializer(flag_obj)
+            return Response(flag_serializer.data, status= status.HTTP_200_OK)
+        except Flag.DoesNotExist:
+            return Response({'detail': 'Flag Record does not exist.'}, status=status.HTTP_404_NOT_FOUND) 
+        
+    def put (self,request,pk):
+        flagobj=Flag.objects.get(id=pk)  
+        def add_user_data(data,user):
+            request.data_mutable=True
+            data['user']=user.id
+            return data
+        flag_serializer=FlagSerializer(flagobj,data=add_user_data(request.data,request.user))
+        print(flag_serializer)
+        if flag_serializer.is_valid():
+            flag_serializer.save()
+            return Response(flag_serializer.data, status=status.HTTP_200_OK)
+        return Response(flag_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+         
+
+    def delete(self,request,pk):
+        # delete a flag by ID
+        try:
+            flag_obj=Flag.objects.get(id=pk)
+            flag_obj.delete()
+            return Response({'detail': 'Flag  was deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
+        except Flag.DoesNotExist:
+            return Response({'detail': 'Flag does not exist.'}, status=status.HTTP_404_NOT_FOUND)     
         
 
 
