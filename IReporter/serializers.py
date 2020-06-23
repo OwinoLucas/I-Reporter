@@ -6,10 +6,10 @@ from rest_framework.validators import UniqueValidator
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True, 
-        validators=[UniqueValidator(queryset=User.object.all())]) 
+        validators=[UniqueValidator(queryset=User.objects.all())]) 
     username = serializers.CharField(
         max_length = 32, 
-        validators=[UniqueValidator(queryset=User.object.all())])
+        validators=[UniqueValidator(queryset=User.objects.all())])
     first_name = serializers.CharField(
         max_length = 32)
     last_name = serializers.CharField(
