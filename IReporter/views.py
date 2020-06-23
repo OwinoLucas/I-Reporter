@@ -1,8 +1,14 @@
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import render 
+<<<<<<< HEAD
 from .models import Profile,User,InterventionRecord,Flag
 from .serializers import ProfileSerializer,UserSerializer,UserRegSerializer,InterventionSerializer,FlagSerializer,TagSerializer
+=======
+from IReporter.models import Profile,User,InterventionRecord
+from IReporter.serializers import ProfileSerializer,UserSerializer,InterventionSerializer, UserRegSerializer
+from rest_framework.response import Response
+>>>>>>> 0a9f0e502cf05031bd680e5a00db586b88677c9c
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.parsers import MultiPartParser,JSONParser,FileUploadParser
@@ -13,6 +19,8 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework.decorators import api_view,APIView,permission_classes
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth import authenticate
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 
@@ -32,6 +40,17 @@ class CreateUserAPIView(APIView):
         model_serializer = UserSerializer(data=serializer.data)
         model_serializer.is_valid(raise_exception=True)
         model_serializer.save()
+
+        subject = 'welcome'
+        body = '''
+                Greetings from the I-reporter Team,
+                Hello ''' + model_serializer.data['first_name'] + ''', we are glad having you as one of our entrusted clients to give news and update the different agencies on the country's development.
+                We ensure that your voices will be heard!
+                Cheers, 
+                The I-reporter team. '''
+        sender = settings.EMAIL_HOST_USER
+        receiver = model_serializer.data['email']
+        send_mail(subject,body,sender,[receiver])
         return Response(model_serializer.data, status=status.HTTP_201_CREATED)
         
 class LoginApiView(APIView):
