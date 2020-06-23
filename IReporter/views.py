@@ -47,10 +47,13 @@ class LoginApiView(APIView):
     permission_classes = (AllowAny,)
     def post(self, request):
         user = authenticate(request, 
-                          email=request.data['email'],
+                          username=request.data['username'],
                           password=request.data['password'])
         if user is not None:
-            user_token = Token.objects.create(user=user)
+            try:
+                user_token = Token.objects.get(user=user)
+            except Token.DoesNotExist:
+                user_token = Token.objects.create(user=user)
             return Response({'token' : user_token.key}, status = status.HTTP_201_CREATED)
         else:
             return Response({'detail' : 'username or password is incorrect.'}, status= status.HTTP_400_BAD_REQUEST)
