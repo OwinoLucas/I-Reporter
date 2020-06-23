@@ -1,11 +1,15 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
+import datetime
+from cloudinary.models import CloudinaryField,CloudinaryResource
+from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
-
+from cloudinary_storage.storage import VideoMediaCloudinaryStorage,MediaCloudinaryStorage
+from cloudinary_storage.validators import validate_video
 # Create your models here.
     
 class UserManager(BaseUserManager):
@@ -59,15 +63,54 @@ class User(AbstractBaseUser, PermissionsMixin):
         super(User, self).save(*args, **kwargs)
         return self
 
+class Profile(models.Model):
+    '''
+    profile class to define profile objects
+    '''
+    profile_picture=CloudinaryField('picture',blank=True)
+    bio=models.CharField(max_length=100,blank=True)
+    contacts=models.CharField(max_length=30,blank=True)
+
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    
 class InterventionRecord(models.Model):
-    STATUS=[
+    STATUS=(
+        ('Under Investigation','Under Investigation'),
+        ('rejected','rejected'),
+        ('resolved','resolved')
+    )
+    title=models.CharField(max_length=50,blank=False)
+    description=models.TextField(blank=True, null=True)
+    time_of_creation=models.DateTimeField(auto_now_add=True)
+    time_last_edit=models.DateTimeField(auto_now=True)
+    
+    status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
+    location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
+    image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
+    videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+
+class Tag(models.Model):
+    tags = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.tags
+
+class Flag(models.Model):
+     STATUS=[
         ('Under Investigation','Under Investigation'),
         ('rejected','rejected'),
         ('resolved','resolved')
     ]
-    title=models.CharField(max_length=50,blank=False,default='')
+    title = models.CharField(max_length=100)
     description=models.TextField()
-    time_of_creation=models.DateTimeField(auto_now_add=True)
-    time_last_edit=models.DateTimeField(auto_now=True)
-    location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
-    status=models.CharField(max_length=250,choices=STATUS,default='')
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now_add=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
+    tags=models.ManyToManyField(Tag)
+    user=models.ForeignKey(User)
+    class Meta:
+        verbose_name_plural = "Flags"    
+    
+    

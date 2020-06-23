@@ -1,7 +1,7 @@
-
-#######ENVIRONMENTS#####
-venv/
+virtual/
 .env
+*/__pycache__/*
+*/migrations/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
