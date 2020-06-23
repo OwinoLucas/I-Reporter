@@ -11,6 +11,7 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework.decorators import api_view,APIView,permission_classes
 from django.contrib.auth.hashers import make_password,check_password
+from django.contrib.auth import authenticate
 
 # Create your views here.
 
@@ -34,13 +35,10 @@ class LoginApiView(APIView):
         try:
             email = request.data['email']
             password = request.data['password']          
-            user = User.objects.get(email=email, password=password)      
+            user = authenticate(email=email, password=password)      
             if user:
                 try:
-                    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-                    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-                    payload = jwt_payload_handler(user)
-                    token = jwt_encode_handler(payload)
+                    token = user.generate_token()
                     #import pdb; pdb.set_trace()
                     user_details = {}
                     user_details['name'] = "%s %s" % (
@@ -51,9 +49,9 @@ class LoginApiView(APIView):
                     return Response({'msg': 'Login successful', 'user_details':user_details }, status=status.HTTP_200_OK)
 
                 except:
-                    return Response({'msg': 'Account not approved or wrong Password.'}, status=status.HTTP_409_CONFLICT)
+                    return Response({'msg': 'Error while generating authenticating token.'}, status=status.HTTP_400_BAD_REQUEST)
             else:           
-                return Response({'msg': 'Can not authenticate with the given credentials or the account has been deactivated'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'msg': 'User with email and password is not found'}, status=status.HTTP_404_NOT_FOUND)
         except KeyError:
             return Response({'msg': 'please provide a email and a password'}, status=status.HTTP_401_UNAUTHORIZED)
 

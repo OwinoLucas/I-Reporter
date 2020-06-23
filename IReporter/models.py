@@ -5,6 +5,9 @@ from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
+import jwt
+from datetime import datetime, timedelta
+from django.conf import settings
 
 # Create your models here.
     
@@ -58,6 +61,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
         return self
+    
+    def generate_token(self,*args):
+        dt = datetime.now() + timedelta(days=60)
+        token = jwt.encode({
+            'id': self.pk,
+            'email': self.email,
+            'exp': int(dt.strftime('%s'))
+        }, settings.SECRET_KEY, algorithm='HS256')
+        return token.decode('utf-8')
 
 class InterventionRecord(models.Model):
     STATUS=[
