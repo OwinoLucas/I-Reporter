@@ -1,5 +1,5 @@
-from rest_framework import serializers 
-from.models import User,InterventionRecord
+from rest_framework import serializers,status
+from IReporter.models import Profile,User,InterventionRecord,Flag,Tag
 from django.contrib.auth.hashers import make_password
  
  
@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'first_name', 'last_name',
                   'date_joined', 'password')
-        #extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -57,20 +57,30 @@ class UserRegSerializer(serializers.Serializer):
  
 
 class InterventionSerializer(serializers.ModelSerializer):
-    
+    # user=serializers.ReadOnlyField()
     class Meta:
         model=InterventionRecord
-        fields=('id','title','description','time_of_creation','time_last_edit','location','status')
+        fields=('id','title','description','time_of_creation',
+        'time_last_edit','location','status','image','videos','user')
 
+class ProfileSerializer(serializers.ModelSerializer):
+    
+    
+    class Meta:
+        model=Profile
+        fields=('id',"profile_picture",'bio','contacts','user')
  
-   #     password = validate_data["password"]
-    #     confirm_password = validate_data["confirm_password"]
-    #     if password != confirm_password:
-    #         raise serializers.ValidationError(
-    #     {"password":"confirm password must match password."})
-    #     user = User(email=email, **extra_fields)
-    #     user.set_password(password)
-    #     # validate_password = make_password
-    #     user.save()
-    #     return user
+class FlagSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Flag
+        fields = '__all__'
         
+class TagSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Tag
+        fields='__all__'         
+
+    
+
