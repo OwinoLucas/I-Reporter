@@ -19,6 +19,7 @@ from decouple import config,Csv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # cloudinary configurations
 cloudinary.config(
     cloud_name=config('cloud_name'),
@@ -29,6 +30,10 @@ CLOUDINARY_STORAGE={
     'API_KEY':config('STORAGE_API_KEY'),
     'API_SECRET':config('STORAGE_API_SECRET_KEY')
 }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.VideoMediaCloudinaryStorage'
+IMAGE_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -79,8 +84,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-
     'cloudinary_storage',
     'cloudinary',
     'rest_framework',
@@ -124,11 +127,11 @@ JWT_AUTH = {
     'JWT_ALGORITHM': 'HS256',
     'JWT_VERIFY': True,
     'JWT_VERIFY_EXPIRATION': True,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=86400),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=60),
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     
     'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=31),
 
     'JWT_AUTH_COOKIE': None,
 }
@@ -147,10 +150,10 @@ MIDDLEWARE = [
    
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = False
-# CORS_ORIGIN_WHITELIST = (
-#     'http://localhost:8081',
-# )
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8081',
+)
 
 ROOT_URLCONF = 'group11.urls'
 
@@ -177,16 +180,16 @@ WSGI_APPLICATION = 'group11.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': '',
+#         'USER': '',
+#         'PASSWORD': '',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 
 
 
@@ -230,8 +233,7 @@ STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'IReporter.User'
 MEDIA_URL='/media/'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.VideoMediaCloudinaryStorage'
-IMAGE_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Email configurations remember to install python-decouple
 EMAIL_USE_TLS = config('EMAIL_USE_TLS')
 EMAIL_HOST = config('EMAIL_HOST')

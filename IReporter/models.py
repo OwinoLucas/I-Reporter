@@ -11,11 +11,11 @@ from django.contrib.auth.models import (
 import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
-
 from cloudinary_storage.storage import VideoMediaCloudinaryStorage,MediaCloudinaryStorage
 from cloudinary_storage.validators import validate_video
-# Create your models here.
-    
+
+
+# Create your models here.  
 class UserManager(BaseUserManager):
  
     def _create_user(self, email, password, **extra_fields):
@@ -80,11 +80,14 @@ class Profile(models.Model):
     '''
     profile class to define profile objects
     '''
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
     profile_picture=CloudinaryField('picture',blank=True)
     bio=models.CharField(max_length=100,blank=True)
     contacts=models.CharField(max_length=30,blank=True)
 
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
+    def __str__(self):
+        return self.user
+
     
 class InterventionRecord(models.Model):
     STATUS=(
@@ -95,13 +98,16 @@ class InterventionRecord(models.Model):
     title=models.CharField(max_length=50,blank=False)
     description=models.TextField(blank=True, null=True)
     time_of_creation=models.DateTimeField(auto_now_add=True)
-    time_last_edit=models.DateTimeField(auto_now=True)
-    
+    time_last_edit=models.DateTimeField(auto_now=True
     status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
     location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
 
 class Tag(models.Model):
     tags = models.CharField(max_length=100)
@@ -110,7 +116,7 @@ class Tag(models.Model):
         return self.tags
 
 class Flag(models.Model):
-     STATUS=[
+    STATUS=[
         ('Under Investigation','Under Investigation'),
         ('rejected','rejected'),
         ('resolved','resolved')
@@ -124,7 +130,12 @@ class Flag(models.Model):
     tags=models.ManyToManyField(Tag)
     image=models.ImageField(upload_to='images/flagimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
-    user=models.ForeignKey(User)
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+
     class Meta:
         verbose_name_plural = "Flags"    
     

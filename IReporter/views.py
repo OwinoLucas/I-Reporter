@@ -1,14 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import status
-from .models import InterventionRecord,Flag
-from .serializers import InterventionSerializer,FlagSerializer,TagSerializer
-from rest_framework.decorators import APIView
 from django.shortcuts import render 
-from IReporter.models import Profile,User,InterventionRecord
-from IReporter.serializers import ProfileSerializer,UserSerializer,InterventionSerializer
-from rest_framework.response import Response
+from .models import Profile,User,InterventionRecord,Flag
+from .serializers import ProfileSerializer,UserSerializer,UserRegSerializer,InterventionSerializer,FlagSerializer,TagSerializer
 from rest_framework.views import APIView
-from rest_framework import status
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.parsers import MultiPartParser,JSONParser,FileUploadParser
 import cloudinary.uploader
@@ -19,14 +14,13 @@ from rest_framework.decorators import api_view,APIView,permission_classes
 from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth import authenticate
 
-# Create your views here.
 
 
-
-
-
-
+# Create your views here
 class CreateUserAPIView(APIView):
+    '''
+    class to define view for the signup api endpoint
+    '''
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,) 
     def post(self, request):
@@ -41,6 +35,9 @@ class CreateUserAPIView(APIView):
         return Response(model_serializer.data, status=status.HTTP_201_CREATED)
         
 class LoginApiView(APIView):
+    '''
+    class to define view for the login api endpoint
+    '''
     permission_classes = (AllowAny,)
     def post(self, request):
         try:
@@ -55,8 +52,7 @@ class LoginApiView(APIView):
                     user_details['name'] = "%s %s" % (
                         user.first_name, user.last_name)
                     user_details['token'] = token
-                    # user_logged_in.send(sender=user.__class__,
-                    #                     request=request, user=user)               
+              
                     return Response({'msg': 'Login successful', 'user_details':user_details }, status=status.HTTP_200_OK)
 
                 except:
@@ -121,7 +117,9 @@ class SingleProfile(APIView):
     # *****GETTING ALL INTERVENTION RECORDS****
 
 class CreateInterventionRecord(APIView):
-    
+    '''
+    class to define view for the intervention record api endpoint
+    ''' 
     def post(self,request): 
         current_user=request.user   
         data=request.data
@@ -131,7 +129,11 @@ class CreateInterventionRecord(APIView):
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
         return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class InterventionList(APIView):
+    '''
+    class to define view for the api endpoint that gets record by searched title 
+    '''
     def get(self,request,title):
         # GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
 
@@ -141,8 +143,11 @@ class InterventionList(APIView):
             return Response(interventions_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 class AllInterventionRecords(APIView):
-    
+    '''
+    class to define view for the api endpoint of all interventions records
+    '''    
     def get(self,request):
     #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
         intervention =InterventionRecord.objects.all()
@@ -168,6 +173,9 @@ class AllInterventionRecords(APIView):
 
 
 class InterventionDetail(APIView):
+    '''
+    class to define view for the api endpoint that gets,updates and deletes specific intervention records 
+    '''
     def get(self,request,pk):
     #FIND TUTORIAL BY pk(id)
 
@@ -205,6 +213,9 @@ class InterventionDetail(APIView):
           
 
 class InterventionListStatus(APIView):
+    '''
+    class to define view for the api endpoint that gets records' status 
+    '''
     def get(self,request,intervention_status):
         # Get all record items using the ntervention_status
         interventions = InterventionRecord.objects.filter(status = intervention_status)
@@ -214,6 +225,9 @@ class InterventionListStatus(APIView):
         return Response({'detail' : 'The status was not found.'}, status=status.HTTP_404_NOT_FOUND)
     
 class CreateFlag(APIView):
+    '''
+    class to define view api endpoint for creating the red flag record 
+    ''' 
     
     def post(self,request): 
         current_user=request.user   
@@ -224,7 +238,11 @@ class CreateFlag(APIView):
             flag_serializer.save()
             return Response(flag_serializer.data, status=status.HTTP_201_CREATED)
         return Response(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class FlagList(APIView):
+    '''
+    class to define view for the api endpoint that gets record by searched title 
+    '''
     def get(self,request,title):
         #function to fetch all flag records data
 
@@ -234,8 +252,11 @@ class FlagList(APIView):
             return Response(flag_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 class AllFlagRecords(APIView):
-    
+    """
+    classs that view the end point for all red flags
+    """
     def get(self,request):
     
         flag_obj =Flag.objects.all()
@@ -261,6 +282,9 @@ class AllFlagRecords(APIView):
 
 
 class FlagStatus(APIView):
+    '''
+    class to define view for the api endpoint that gets records' status 
+    '''
     def get(self,request,intervention_status):
         # Get all record items using the flag status
         flag_obj = Flag.objects.filter(status = flag_status)
@@ -271,6 +295,9 @@ class FlagStatus(APIView):
 
 
 class FlagDetail(APIView):
+    '''
+    class to define view for the api endpoint that gets,updates and deletes specific red flag records 
+    '''
     def get(self,request,pk):
     #retreive flag record by ID
 
