@@ -16,14 +16,8 @@ from django.http.response import JsonResponse
 import jwt
 from rest_framework_jwt.settings import api_settings
 from rest_framework.decorators import api_view,APIView,permission_classes
-
-# pytest.ini
-
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from rest_framework import status
-from .serializers import UserSerializer
+from django.contrib.auth.hashers import make_password,check_password
+from django.contrib.auth import authenticate
 
 # Create your views here.
 
@@ -36,32 +30,27 @@ class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,) 
     def post(self, request):
-        current_user=request.user
-        user = request.data
-        print(current_user)
-        serializer = UserSerializer(data=user)
-        
+        # Validating our serializer from the UserRegSerializer
+        serializer = UserRegSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.user=current_user
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # Everything's valid, so send it to the UserSerializer
+        model_serializer = UserSerializer(data=serializer.data)
+        model_serializer.is_valid(raise_exception=True)
+        model_serializer.save()
+        return Response(model_serializer.data, status=status.HTTP_201_CREATED)
         
 class LoginApiView(APIView):
     permission_classes = (AllowAny,)
     def post(self, request):
         try:
             email = request.data['email']
-            password = request.data['password']
-
-            user = User.objects.get(email=email, password=password)
-            
-            # import pdb; pdb.set_trace()
+            password = request.data['password']          
+            user = authenticate(email=email, password=password)      
             if user:
                 try:
-                    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-                    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-                    payload = jwt_payload_handler(user)
-                    token = jwt_encode_handler(payload)
+                    token = user.generate_token()
+                    #import pdb; pdb.set_trace()
                     user_details = {}
                     user_details['name'] = "%s %s" % (
                         user.first_name, user.last_name)
@@ -71,9 +60,9 @@ class LoginApiView(APIView):
                     return Response({'msg': 'Login successful', 'user_details':user_details }, status=status.HTTP_200_OK)
 
                 except:
-                    return Response({'msg': 'Account not approved or wrong Password.'}, status=status.HTTP_409_CONFLICT)
+                    return Response({'msg': 'Error while generating authenticating token.'}, status=status.HTTP_400_BAD_REQUEST)
             else:           
-                return Response({'msg': 'Can not authenticate with the given credentials or the account has been deactivated'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'msg': 'User with email and password is not found'}, status=status.HTTP_404_NOT_FOUND)
         except KeyError:
             return Response({'msg': 'please provide a email and a password'}, status=status.HTTP_401_UNAUTHORIZED)
 

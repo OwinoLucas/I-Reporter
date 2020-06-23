@@ -8,6 +8,10 @@ from django.db import transaction
 from django.contrib.auth.models import (
     AbstractBaseUser, PermissionsMixin, BaseUserManager
 )
+import jwt
+from datetime import datetime, timedelta
+from django.conf import settings
+
 from cloudinary_storage.storage import VideoMediaCloudinaryStorage,MediaCloudinaryStorage
 from cloudinary_storage.validators import validate_video
 # Create your models here.
@@ -62,6 +66,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
         return self
+    
+    def generate_token(self,*args):
+        dt = datetime.now() + timedelta(days=60)
+        token = jwt.encode({
+            'id': self.pk,
+            'email': self.email,
+            'exp': int(dt.strftime('%s'))
+        }, settings.SECRET_KEY, algorithm='HS256')
+        return token.decode('utf-8')
 
 class Profile(models.Model):
     '''
@@ -85,8 +98,6 @@ class InterventionRecord(models.Model):
     time_last_edit=models.DateTimeField(auto_now=True)
     
     status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
-
-
     location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
