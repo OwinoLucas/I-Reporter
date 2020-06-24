@@ -136,8 +136,9 @@ class CreateInterventionRecord(APIView):
     def post(self,request): 
         current_user=request.user   
         data=request.data
-        data['user']=current_user.id
+        data['user']=1
         intervention_serializer = InterventionSerializer(data=data)
+        print(intervention_serializer)
         if intervention_serializer.is_valid():
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
@@ -197,6 +198,7 @@ class InterventionDetail(APIView):
             request.data_mutable=True
             data['user']=user.id
             return data
+
         intervention_serializer=InterventionSerializer(intervention,data=add_user_data(request.data,request.user))
         print(intervention_serializer)
         if intervention_serializer.is_valid():

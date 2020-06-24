@@ -87,8 +87,8 @@ class InterventionRecord(models.Model):
     status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
 
 
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True,null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6,blank=True,null=True)
+    latitude = models.CharField(max_length=200, blank=True,null=True)
+    longitude = models.CharField(max_length=200,blank=True,null=True)
     
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
