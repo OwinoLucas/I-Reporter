@@ -168,15 +168,15 @@ class AllInterventionRecords(APIView):
         return JsonResponse(intervention_serializers.data, safe=False)
 
     # #CREATE AND SAVE A NEW INTERVENTION RECORD
-    def post(self,request,format=None):        
-        def add_user_data(data,user):
-                data['profile']=user.id
-                return data
-        intervention_serializer = InterventionSerializer(data=add_user_data(request.data,request.user))
-        if intervention_serializer.is_valid():
-            intervention_serializer.save()
-            return Response(intervention_serializer.data, status=status.HTTP_201_CREATED) 
-        return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self,request,format=None):        
+    #     def add_user_data(data,user):
+    #             data['profile']=user.id
+    #             return data
+    #     intervention_serializer = InterventionSerializer(data=add_user_data(request.data,request.user))
+    #     if intervention_serializer.is_valid():
+    #         intervention_serializer.save()
+    #         return Response(intervention_serializer.data, status=status.HTTP_201_CREATED) 
+    #     return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class InterventionList(APIView):
     '''
@@ -279,7 +279,7 @@ class FlagList(APIView):
 
 class AllFlagRecords(APIView):
     """
-    classs that view the end point for all red flags
+    class that view the end point for all red flags
     """
     permission_classes = (IsAuthenticated,)
     def get(self,request):
@@ -295,15 +295,15 @@ class AllFlagRecords(APIView):
         return JsonResponse(flag_serializers.data, safe=False)
 
     #create and save flag record
-    def post(self,request,format=None):        
-        def add_user_data(data,user):
-                data['profile']=user.id
-                return data
-        flag_serializer = FlagSerializer(data=add_user_data(request.data,request.user))
-        if flag_serializer.is_valid():
-            flag_serializer.save()
-            return Response(flag_serializer.data, status=status.HTTP_201_CREATED) 
-        return Response(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self,request,format=None):        
+    #     def add_user_data(data,user):
+    #             data['profile']=user.id
+    #             return data
+    #     flag_serializer = FlagSerializer(data=add_user_data(request.data,request.user))
+    #     if flag_serializer.is_valid():
+    #         flag_serializer.save()
+    #         return Response(flag_serializer.data, status=status.HTTP_201_CREATED) 
+    #     return Response(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FlagStatus(APIView):
@@ -311,7 +311,7 @@ class FlagStatus(APIView):
     class to define view for the api endpoint that gets records' status 
     '''
     permission_classes = (IsAuthenticated,)
-    def get(self,request,intervention_status):
+    def get(self,request,flag_status):
         # Get all record items using the flag status
         flag_obj = Flag.objects.filter(status = flag_status)
         if Flag.exists():

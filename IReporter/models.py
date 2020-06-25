@@ -116,6 +116,9 @@ class InterventionRecord(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        ordering = ["-pk"]
+
 class Flag(models.Model):
     '''
     profile class to define FlagRecord objects
@@ -140,6 +143,8 @@ class Flag(models.Model):
         return self.title
 
     class Meta:
-        verbose_name_plural = "Flags"    
+        verbose_name_plural = "Flags"  
+        ordering = ["-pk"]
+         
     
     
