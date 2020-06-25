@@ -9,8 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
  
     class Meta(object):
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name',
-                  'date_joined', 'password')
+        fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -55,32 +54,29 @@ class UserRegSerializer(serializers.Serializer):
           
         return data
  
-
 class InterventionSerializer(serializers.ModelSerializer):
-    # user=serializers.ReadOnlyField()
+    
     class Meta:
-        model=InterventionRecord
-        fields=('id','title','description','time_of_creation',
-        'time_last_edit','location','status','image','videos','user')
+        model = InterventionRecord
+        fields = '__all__'
 
 class ProfileSerializer(serializers.ModelSerializer):
-    
-    
+       
     class Meta:
-        model=Profile
-        fields=('id',"profile_picture",'bio','contacts','user')
+        model = Profile
+        fields = '__all__'
  
 class FlagSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model=Flag
+        model = Flag
         fields = '__all__'
         
 class TagSerializer(serializers.ModelSerializer):
     
     class Meta:
-        model=Tag
-        fields='__all__'         
+        model = Tag
+        fields = '__all__'         
 
     
 

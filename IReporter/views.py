@@ -1,14 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import render 
-<<<<<<< HEAD
-from .models import Profile,User,InterventionRecord,Flag
+from .models import Profile,User,InterventionRecord,Flag,Tag
 from .serializers import ProfileSerializer,UserSerializer,UserRegSerializer,InterventionSerializer,FlagSerializer,TagSerializer
-=======
-from IReporter.models import Profile,User,InterventionRecord
-from IReporter.serializers import ProfileSerializer,UserSerializer,InterventionSerializer, UserRegSerializer
-from rest_framework.response import Response
->>>>>>> 0a9f0e502cf05031bd680e5a00db586b88677c9c
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.parsers import MultiPartParser,JSONParser,FileUploadParser
@@ -21,6 +15,8 @@ from django.contrib.auth.hashers import make_password,check_password
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.conf import settings
+from .backends import JWTAuthentication
+from rest_framework import generics
 
 
 
@@ -72,12 +68,12 @@ class LoginApiView(APIView):
                         user.first_name, user.last_name)
                     user_details['token'] = token
               
-                    return Response({'msg': 'Login successful', 'user_details':user_details }, status=status.HTTP_200_OK)
+                    return Response({'success':1,'msg': 'Login successful', 'user_details':user_details }, status=status.HTTP_200_OK)
 
                 except:
                     return Response({'msg': 'Error while generating authenticating token.'}, status=status.HTTP_400_BAD_REQUEST)
             else:           
-                return Response({'msg': 'User with email and password is not found'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'success':0,'msg': 'User with email and password is not found'}, status=status.HTTP_404_NOT_FOUND)
         except KeyError:
             return Response({'msg': 'please provide a email and a password'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -86,7 +82,7 @@ class ProfileList(APIView):
     class to define view for the profile api endpoint
     '''
     permission_classes = (IsAuthenticated,)
- 
+    
     def get(self, request, format=None):
         all_profiles=Profile.objects.all()
         serializers=ProfileSerializer(all_profiles,many=True)
@@ -95,7 +91,9 @@ class ProfileList(APIView):
     def post(self, request, format=None):
         def add_user_data(data,user):
             data['user']=user.id
+            # import pdb; pdb.set_trace() 
             return data
+           
         serializers = ProfileSerializer(data=add_user_data(request.data,request.user))
         
         if serializers.is_valid():
@@ -138,35 +136,25 @@ class SingleProfile(APIView):
 class CreateInterventionRecord(APIView):
     '''
     class to define view for the intervention record api endpoint
-    ''' 
+    '''
+    permission_classes = (IsAuthenticated,) 
     def post(self,request): 
         current_user=request.user   
         data=request.data
         data['user']=current_user.id
         intervention_serializer = InterventionSerializer(data=data)
+        print(intervention_serializer)
         if intervention_serializer.is_valid():
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
         return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class InterventionList(APIView):
-    '''
-    class to define view for the api endpoint that gets record by searched title 
-    '''
-    def get(self,request,title):
-        # GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
-
-        interventions = InterventionRecord.objects.filter(title__icontains=title)
-        if interventions.exists():
-            interventions_serializer = InterventionSerializer(interventions, many=True)
-            return Response(interventions_serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 class AllInterventionRecords(APIView):
     '''
     class to define view for the api endpoint of all interventions records
-    '''    
+    ''' 
+    permission_classes = (IsAuthenticated,)   
     def get(self,request):
     #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
         intervention =InterventionRecord.objects.all()
@@ -190,22 +178,37 @@ class AllInterventionRecords(APIView):
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED) 
         return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class InterventionList(APIView):
+    '''
+    class to define view for the api endpoint that gets record by searched title 
+    '''
+    permission_classes = (IsAuthenticated,)
+    def get(self,request,title):
+        # GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
+
+        interventions = InterventionRecord.objects.filter(title__icontains=title)
+        if interventions.exists():
+            interventions_serializer = InterventionSerializer(interventions, many=True)
+            return Response(interventions_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class InterventionDetail(APIView):
     '''
     class to define view for the api endpoint that gets,updates and deletes specific intervention records 
     '''
+    permission_classes = (IsAuthenticated,)
     def get(self,request,pk):
-    #FIND TUTORIAL BY pk(id)
-
+    
         try:
             intervention=InterventionRecord.objects.get(pk=pk)
         
             intervention_serializer=InterventionSerializer(intervention)
-            return Response(intervention_serializer.data, status= status.HTTP_200_OK)
+            return Response(intervention_serializer.data)
         except InterventionRecord.DoesNotExist:
             return Response({'detail': 'The Intervention Record does not exist.'}, status=status.HTTP_404_NOT_FOUND) 
-        
+
     def put (self,request,pk):
         intervention=InterventionRecord.objects.get(id=pk)  
         # tutorial_data = JSONParser().parse(request)
@@ -235,6 +238,7 @@ class InterventionListStatus(APIView):
     '''
     class to define view for the api endpoint that gets records' status 
     '''
+    permission_classes = (IsAuthenticated,)
     def get(self,request,intervention_status):
         # Get all record items using the ntervention_status
         interventions = InterventionRecord.objects.filter(status = intervention_status)
@@ -247,7 +251,7 @@ class CreateFlag(APIView):
     '''
     class to define view api endpoint for creating the red flag record 
     ''' 
-    
+    permission_classes = (IsAuthenticated,)
     def post(self,request): 
         current_user=request.user   
         data=request.data
@@ -262,6 +266,7 @@ class FlagList(APIView):
     '''
     class to define view for the api endpoint that gets record by searched title 
     '''
+    permission_classes = (IsAuthenticated,)
     def get(self,request,title):
         #function to fetch all flag records data
 
@@ -276,6 +281,7 @@ class AllFlagRecords(APIView):
     """
     classs that view the end point for all red flags
     """
+    permission_classes = (IsAuthenticated,)
     def get(self,request):
     
         flag_obj =Flag.objects.all()
@@ -304,6 +310,7 @@ class FlagStatus(APIView):
     '''
     class to define view for the api endpoint that gets records' status 
     '''
+    permission_classes = (IsAuthenticated,)
     def get(self,request,intervention_status):
         # Get all record items using the flag status
         flag_obj = Flag.objects.filter(status = flag_status)
@@ -317,6 +324,7 @@ class FlagDetail(APIView):
     '''
     class to define view for the api endpoint that gets,updates and deletes specific red flag records 
     '''
+    permission_classes = (IsAuthenticated,)
     def get(self,request,pk):
     #retreive flag record by ID
 
@@ -341,7 +349,6 @@ class FlagDetail(APIView):
             return Response(flag_serializer.data, status=status.HTTP_200_OK)
         return Response(flag_serializer.errors,status=status.HTTP_400_BAD_REQUEST)
          
-
     def delete(self,request,pk):
         # delete a flag by ID
         try:
@@ -349,7 +356,23 @@ class FlagDetail(APIView):
             flag_obj.delete()
             return Response({'detail': 'Flag  was deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
         except Flag.DoesNotExist:
-            return Response({'detail': 'Flag does not exist.'}, status=status.HTTP_404_NOT_FOUND)     
+            return Response({'detail': 'Flag does not exist.'}, status=status.HTTP_404_NOT_FOUND)   
+
+class TagList(generics.ListCreateAPIView):
+    """
+    Create tag and list all tags
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = (IsAuthenticated,)
+
+class TagDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Get, update and delete tag
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = (IsAuthenticated,) 
         
 
 

@@ -5,9 +5,7 @@ import datetime
 from cloudinary.models import CloudinaryField,CloudinaryResource
 from django.utils import timezone
 from django.db import transaction
-from django.contrib.auth.models import (
-    AbstractBaseUser, PermissionsMixin, BaseUserManager
-)
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin, BaseUserManager)
 import jwt
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -48,7 +46,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     An abstract base class implementing a fully featured User model with
     admin-compliant permissions.
- 
     """
     email = models.EmailField(max_length=40, unique=True)
     first_name = models.CharField(max_length=30, blank=True)
@@ -62,7 +59,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
- 
     def save(self, *args, **kwargs):
         super(User, self).save(*args, **kwargs)
         return self
@@ -88,8 +84,19 @@ class Profile(models.Model):
     def __str__(self):
         return self.user
 
-    
+class Tag(models.Model):
+    '''
+    profile class to define tag object
+    '''
+    tag_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.tag_name
+  
 class InterventionRecord(models.Model):
+    '''
+    profile class to define InterventionRecord objects
+    '''
     STATUS=(
         ('Under Investigation','Under Investigation'),
         ('rejected','rejected'),
@@ -98,24 +105,21 @@ class InterventionRecord(models.Model):
     title=models.CharField(max_length=50,blank=False)
     description=models.TextField(blank=True, null=True)
     time_of_creation=models.DateTimeField(auto_now_add=True)
-    time_last_edit=models.DateTimeField(auto_now=True
+    time_last_edit=models.DateTimeField(auto_now=True)
     status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
     location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
     user=models.ForeignKey(User,on_delete=models.CASCADE)
+    tags=models.ManyToManyField(Tag)
 
     def __str__(self):
         return self.title
 
-
-class Tag(models.Model):
-    tags = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.tags
-
 class Flag(models.Model):
+    '''
+    profile class to define FlagRecord objects
+    '''
     STATUS=[
         ('Under Investigation','Under Investigation'),
         ('rejected','rejected'),
@@ -124,7 +128,7 @@ class Flag(models.Model):
     title = models.CharField(max_length=100)
     description=models.TextField()
     created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default='')
     tags=models.ManyToManyField(Tag)
@@ -134,7 +138,6 @@ class Flag(models.Model):
 
     def __str__(self):
         return self.title
-
 
     class Meta:
         verbose_name_plural = "Flags"    
