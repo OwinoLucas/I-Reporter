@@ -90,8 +90,8 @@ class InterventionRecord(models.Model):
     latitude = models.CharField(max_length=200, blank=True,null=True)
     longitude = models.CharField(max_length=200,blank=True,null=True)
     
-    image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
-    videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
+    image=models.ImageField(upload_to='images/interventionimages/',blank=True,null=True,storage=MediaCloudinaryStorage(),max_length=100000, default="media/images/intervention_default_al92r5.jpg")
+    videos=models.FileField(upload_to='videos/',blank=True,null=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
     user=models.ForeignKey(User,on_delete=models.CASCADE)
 
 class Tag(models.Model):
