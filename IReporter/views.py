@@ -162,8 +162,8 @@ class InterventionList(APIView):
 class AllInterventionRecords(APIView):
     
     def get(self,request):
-        interventiont=InterventionRecord.objects.get(id=1)
-        print(interventiont)
+        # interventiont=InterventionRecord.objects.get(id=1)
+        # print(interventiont)
     #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
         intervention =InterventionRecord.objects.all()
         current_user=self.request.user
