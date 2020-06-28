@@ -84,7 +84,7 @@ class InterventionRecord(models.Model):
     time_of_creation=models.DateTimeField(auto_now_add=True)
     time_last_edit=models.DateTimeField(auto_now=True)
     
-    status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
+    status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True ,default="waiting")
 
 
     latitude = models.CharField(max_length=200, blank=True,null=True)
