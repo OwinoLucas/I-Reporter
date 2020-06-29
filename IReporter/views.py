@@ -151,7 +151,7 @@ class InterventionList(APIView):
 
     def get(self,request,title):
         
-        # GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
+        
 
         interventions = InterventionRecord.objects.filter(title__icontains=title)
         if interventions.exists():
@@ -162,12 +162,10 @@ class InterventionList(APIView):
 class AllInterventionRecords(APIView):
     
     def get(self,request):
-        # interventiont=InterventionRecord.objects.get(id=1)
-        # print(interventiont)
-    #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
+     
         intervention =InterventionRecord.objects.all()
         current_user=self.request.user
-        # print(current_user)
+        
         title = request.GET.get('title', None)
         if title is not None:
             intervention = InterventionRecord.filter(title__icontains=title)
