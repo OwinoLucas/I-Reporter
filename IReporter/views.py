@@ -54,6 +54,7 @@ class LoginApiView(APIView):
     class to define view for the login api endpoint
     '''
     permission_classes = (AllowAny,)
+
     def post(self, request):
         try:
             email = request.data['email']
@@ -141,13 +142,31 @@ class CreateInterventionRecord(APIView):
     def post(self,request): 
         current_user=request.user   
         data=request.data
-        data['user']=current_user.id
+        data._mutable=True
+        data['user']=1
+        data._mutable=False
+            
         intervention_serializer = InterventionSerializer(data=data)
         print(intervention_serializer)
         if intervention_serializer.is_valid():
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
         return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class InterventionList(APIView):
+
+    
+
+    def get(self,request,title):
+        
+        
+
+        interventions = InterventionRecord.objects.filter(title__icontains=title)
+        if interventions.exists():
+            interventions_serializer = InterventionSerializer(interventions, many=True)
+            
+            return Response(interventions_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AllInterventionRecords(APIView):
@@ -156,10 +175,10 @@ class AllInterventionRecords(APIView):
     ''' 
     permission_classes = (IsAuthenticated,)   
     def get(self,request):
-    #GET LIST OF INTERVENTION RECORDS,POST A NEW INTERVENTION,DELETE ALL INTERVENTIONS...
+     
         intervention =InterventionRecord.objects.all()
         current_user=self.request.user
-        print(current_user)
+        
         title = request.GET.get('title', None)
         if title is not None:
             intervention = InterventionRecord.filter(title__icontains=title)
@@ -213,11 +232,14 @@ class InterventionDetail(APIView):
         intervention=InterventionRecord.objects.get(id=pk)  
         # tutorial_data = JSONParser().parse(request)
         def add_user_data(data,user):
-            request.data_mutable=True
-            data['user']=user.id
+            data._mutable=True
+            data['user']=1
+            data._mutable=False
             return data
+
         intervention_serializer=InterventionSerializer(intervention,data=add_user_data(request.data,request.user))
         print(intervention_serializer)
+        data={}
         if intervention_serializer.is_valid():
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_200_OK)
@@ -286,7 +308,7 @@ class AllFlagRecords(APIView):
     
         flag_obj =Flag.objects.all()
         current_user=self.request.user
-        print(current_user)
+        # print(current_user)
         title = request.GET.get('title', None)
         if title is not None:
             flag_obj = Flag.filter(title__icontains=title)

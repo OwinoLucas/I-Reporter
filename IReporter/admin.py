@@ -1,4 +1,6 @@
 from django.contrib import admin
+# Register your models here.
+from .models import User,Profile
 from .models import User,Profile,Flag,InterventionRecord,Tag
 
 
