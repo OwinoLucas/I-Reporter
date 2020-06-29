@@ -65,6 +65,7 @@ class LoginApiView(APIView):
                     token = user.generate_token()
                     #import pdb; pdb.set_trace()
                     user_details = {}
+                    user_details['id'] = "%d" % (user.id)
                     user_details['name'] = "%s %s" % (
                         user.first_name, user.last_name)
                     user_details['token'] = token
