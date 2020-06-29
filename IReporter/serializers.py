@@ -57,14 +57,8 @@ class UserRegSerializer(serializers.Serializer):
 class InterventionSerializer(serializers.ModelSerializer):
     
     class Meta:
-<<<<<<< HEAD
-        model=InterventionRecord
-        fields=('id','title','description','time_of_creation',
-        'time_last_edit','latitude','longitude','status','image','videos','user')
-=======
         model = InterventionRecord
         fields = '__all__'
->>>>>>> origin/master
 
 class ProfileSerializer(serializers.ModelSerializer):
        

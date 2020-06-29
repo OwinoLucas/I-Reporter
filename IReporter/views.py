@@ -18,12 +18,9 @@ from django.conf import settings
 from .backends import JWTAuthentication
 from rest_framework import generics
 
-<<<<<<< HEAD
-=======
 
 
 # Create your views here
->>>>>>> origin/master
 class CreateUserAPIView(APIView):
     '''
     class to define view for the signup api endpoint
@@ -31,16 +28,8 @@ class CreateUserAPIView(APIView):
     # Allow any user (authenticated or not) to access this url 
     permission_classes = (AllowAny,) 
     def post(self, request):
-<<<<<<< HEAD
-        current_user=request.user
-        user = request.data
-        # print(current_user)
-        serializer = UserSerializer(data=user)
-        
-=======
         # Validating our serializer from the UserRegSerializer
         serializer = UserRegSerializer(data=request.data)
->>>>>>> origin/master
         serializer.is_valid(raise_exception=True)
 
         # Everything's valid, so send it to the UserSerializer
@@ -163,7 +152,6 @@ class CreateInterventionRecord(APIView):
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
         return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-<<<<<<< HEAD
 class InterventionList(APIView):
 
     
@@ -179,10 +167,8 @@ class InterventionList(APIView):
             return Response(interventions_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
-=======
 
 
->>>>>>> origin/master
 class AllInterventionRecords(APIView):
     '''
     class to define view for the api endpoint of all interventions records

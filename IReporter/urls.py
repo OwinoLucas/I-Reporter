@@ -13,7 +13,7 @@ urlpatterns=[
     url(r'^api/profile/(?P<pk>[0-9]+)$',SingleProfile.as_view(),name="singleprofile"),
     url(r'^api/intervention-record/create/$', CreateInterventionRecord.as_view(), name='create-intervention-item'),
     url(r'^api/intervention-records/$',AllInterventionRecords.as_view(), name='AllInterventionRecords'),
-    url(r'^api/intervention-record/search/[\s]*(.*?)[\s]*$',InterventionList.as_view(), name='fetch-intervention-records'),
+    url(r'^api/intervention-record/search/[\s]*(.*?)[\s]*/$',InterventionList.as_view(), name='fetch-intervention-records'),
     url(r'^api/intervention-record/detail/(?P<pk>[0-9]+)$',InterventionDetail.as_view(), name='intervention-detail'),
     url(r'^api/intervention-records/status/(?P<intervention_status>[A-Za-z]+)$' ,InterventionListStatus.as_view(), name='filter-by-status'),
     url(r'^api/flags/create/$',CreateFlag.as_view()),

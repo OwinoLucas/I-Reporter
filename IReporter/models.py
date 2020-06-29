@@ -106,21 +106,14 @@ class InterventionRecord(models.Model):
     description=models.TextField(blank=True, null=True)
     time_of_creation=models.DateTimeField(auto_now_add=True)
     time_last_edit=models.DateTimeField(auto_now=True)
-<<<<<<< HEAD
     status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True ,default="waiting")
     latitude = models.CharField(max_length=200, blank=True,null=True)
     longitude = models.CharField(max_length=200,blank=True,null=True)
     
     image=models.ImageField(upload_to='images/interventionimages/',blank=True,null=True,storage=MediaCloudinaryStorage(),max_length=100000, default="media/images/intervention_default_al92r5.jpg")
     videos=models.FileField(upload_to='videos/',blank=True,null=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
-=======
-    status=models.CharField(max_length=20,choices=STATUS, blank=True, null=True)
-    location=models.CharField(max_length=50,blank=True)##UP FOR REVIEW####
-    image=models.ImageField(upload_to='images/interventionimages/',blank=True,storage=MediaCloudinaryStorage())
-    videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
->>>>>>> origin/master
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-    tags=models.ManyToManyField(Tag)
+    tags=models.ManyToManyField(Tag,blank=True)
 
     def __str__(self):
         return self.title
@@ -129,12 +122,9 @@ class InterventionRecord(models.Model):
         ordering = ["-pk"]
 
 class Flag(models.Model):
-<<<<<<< HEAD
-=======
     '''
     profile class to define FlagRecord objects
     '''
->>>>>>> origin/master
     STATUS=[
         ('Under Investigation','Under Investigation'),
         ('rejected','rejected'),
@@ -150,13 +140,10 @@ class Flag(models.Model):
     image=models.ImageField(upload_to='images/flagimages/',blank=True,storage=MediaCloudinaryStorage())
     videos=models.FileField(upload_to='videos/',blank=True,storage=VideoMediaCloudinaryStorage(),validators=[validate_video])
     user=models.ForeignKey(User,on_delete=models.CASCADE)
-<<<<<<< HEAD
-=======
 
     def __str__(self):
         return self.title
 
->>>>>>> origin/master
     class Meta:
         verbose_name_plural = "Flags"  
         ordering = ["-pk"]
