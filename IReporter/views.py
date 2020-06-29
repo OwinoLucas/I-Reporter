@@ -156,6 +156,7 @@ class InterventionList(APIView):
         interventions = InterventionRecord.objects.filter(title__icontains=title)
         if interventions.exists():
             interventions_serializer = InterventionSerializer(interventions, many=True)
+            
             return Response(interventions_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
