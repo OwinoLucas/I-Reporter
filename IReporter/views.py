@@ -252,8 +252,11 @@ class CreateFlag(APIView):
     def post(self,request): 
         current_user=request.user   
         data=request.data
-        data['user']=current_user.id
+        data._mutable=True
+        data['user']=1
+        data._mutable=False
         flag_serializer = FlagSerializer(data=data)
+        print(flag_serializer)
         if flag_serializer.is_valid():
             flag_serializer.save()
             return Response(flag_serializer.data, status=status.HTTP_201_CREATED)
@@ -263,7 +266,6 @@ class FlagList(APIView):
     '''
     class to define view for the api endpoint that gets record by searched title 
     '''
-    permission_classes = (IsAuthenticated,)
     def get(self,request,title):
         #function to fetch all flag records data
 
@@ -302,21 +304,6 @@ class AllFlagRecords(APIView):
     #         return Response(flag_serializer.data, status=status.HTTP_201_CREATED) 
     #     return Response(flag_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-class FlagStatus(APIView):
-    '''
-    class to define view for the api endpoint that gets records' status 
-    '''
-    permission_classes = (IsAuthenticated,)
-    def get(self,request,flag_status):
-        # Get all record items using the flag status
-        flag_obj = Flag.objects.filter(status = flag_status)
-        if Flag.exists():
-            flag_serializer = FlagSerializer(flag_obj, many=True)
-            return Response(flag_serializer.data, status=status.HTTP_200_OK)
-        return Response({'detail' : 'The status was not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-
 class FlagDetail(APIView):
     '''
     class to define view for the api endpoint that gets,updates and deletes specific red flag records 
@@ -334,13 +321,16 @@ class FlagDetail(APIView):
             return Response({'detail': 'Flag Record does not exist.'}, status=status.HTTP_404_NOT_FOUND) 
         
     def put (self,request,pk):
-        flagobj=Flag.objects.get(id=pk)  
+        flag_obj=Flag.objects.get(id=pk)  
         def add_user_data(data,user):
-            request.data_mutable=True
-            data['user']=user.id
+            data._mutable=True
+            data['user']=1
+            data.mutable=False
             return data
-        flag_serializer=FlagSerializer(flagobj,data=add_user_data(request.data,request.user))
+
+        flag_serializer=FlagSerializer(flag_obj,data=add_user_data(request.data,request.user))
         print(flag_serializer)
+        data={}
         if flag_serializer.is_valid():
             flag_serializer.save()
             return Response(flag_serializer.data, status=status.HTTP_200_OK)
