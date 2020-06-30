@@ -153,22 +153,6 @@ class CreateInterventionRecord(APIView):
             intervention_serializer.save()
             return Response(intervention_serializer.data, status=status.HTTP_201_CREATED)
         return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-class InterventionList(APIView):
-
-    
-
-    def get(self,request,title):
-        
-        
-
-        interventions = InterventionRecord.objects.filter(title__icontains=title)
-        if interventions.exists():
-            interventions_serializer = InterventionSerializer(interventions, many=True)
-            
-            return Response(interventions_serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response({'detail':'this title was not found.'}, status=status.HTTP_404_NOT_FOUND)
-
 
 class AllInterventionRecords(APIView):
     '''
@@ -187,16 +171,6 @@ class AllInterventionRecords(APIView):
         intervention_serializers = InterventionSerializer(intervention, many=True)
         return JsonResponse(intervention_serializers.data, safe=False)
 
-    # #CREATE AND SAVE A NEW INTERVENTION RECORD
-    # def post(self,request,format=None):        
-    #     def add_user_data(data,user):
-    #             data['profile']=user.id
-    #             return data
-    #     intervention_serializer = InterventionSerializer(data=add_user_data(request.data,request.user))
-    #     if intervention_serializer.is_valid():
-    #         intervention_serializer.save()
-    #         return Response(intervention_serializer.data, status=status.HTTP_201_CREATED) 
-    #     return Response(intervention_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class InterventionList(APIView):
     '''
