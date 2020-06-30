@@ -19,8 +19,7 @@ urlpatterns=[
     url(r'^api/flags/create/$',CreateFlag.as_view()),
     url(r'^api/flags/$',AllFlagRecords.as_view(),name='allflags'),
     url(r'^api/flag/detail/(?P<pk>[0-9]+)$',FlagDetail.as_view()),
-    url(r'^api/flags/status/(?P<flag_status>[A-Za-z]+)$' ,FlagStatus.as_view(), name='filter-by-status'),
-    url(r'^api/flag/search/(?P<title>[A-Za-z]+)$',FlagList.as_view(), name='flag list records fetch'),
+    url(r'^api/flag/search/[\s]*(.*?)[\s]*/$',FlagList.as_view(), name='fetch flag records'),
     url(r'^api/tags/$', TagList.as_view()),
     url(r'^api/tag/(?P<pk>[0-9]+)$', TagDetail.as_view()),
 ]
