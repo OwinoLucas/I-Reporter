@@ -325,7 +325,7 @@ class FlagDetail(APIView):
         def add_user_data(data,user):
             data._mutable=True
             data['user']=1
-            data.mutable=False
+            data._mutable=False
             return data
 
         flag_serializer=FlagSerializer(flag_obj,data=add_user_data(request.data,request.user))
