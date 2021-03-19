@@ -9,7 +9,7 @@ Django==3.0.7
 django-cloudinary-storage==0.2.3
 django-cors-headers==3.4.0
 django-utils-six==2.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 djangorestframework-jwt==1.11.0
 idna==2.9
 more-itertools==8.4.0
